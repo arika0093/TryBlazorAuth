@@ -1,20 +1,28 @@
 ﻿@using TryBlazorAuth.Auth
 @using BitzArt.Blazor.Auth
+@attribute [AllowAnonymous]
 @page "/login"
 
-<MudContainer MaxWidth="MaxWidth.Medium">
-    <MudStack Spacing="3">
-        <MudStack Row Spacing="2">
-            <MudTextField Label="Id" @bind-Value="Id" Variant="Variant.Outlined" FullWidth="true" Margin="Margin.Dense" />
-            <MudTextField Label="Password" @bind-Value="Password" Variant="Variant.Outlined" FullWidth="true" Margin="Margin.Dense" InputType="InputType.Password" />
-        </MudStack>
-        @if(!string.IsNullOrEmpty(Message))
-        {
-            <MudAlert Severity="Severity.Error">@Message</MudAlert>
-        }
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="HandleLogin">ログイン</MudButton>
-    </MudStack>
-</MudContainer>
+<AuthorizeView>
+    <Authorized>
+        <MudText>You are already logged in.</MudText>
+    </Authorized>
+    <NotAuthorized>
+        <MudContainer MaxWidth="MaxWidth.Medium">
+            <MudStack Spacing="3">
+                <MudStack Row Spacing="2">
+                    <MudTextField Label="Id" @bind-Value="Id" Variant="Variant.Outlined" FullWidth="true" Margin="Margin.Dense" />
+                    <MudTextField Label="Password" @bind-Value="Password" Variant="Variant.Outlined" FullWidth="true" Margin="Margin.Dense" InputType="InputType.Password" />
+                </MudStack>
+                @if(!string.IsNullOrEmpty(Message))
+                {
+                    <MudAlert Severity="Severity.Error">@Message</MudAlert>
+                }
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="HandleLogin">ログイン</MudButton>
+            </MudStack>
+        </MudContainer>
+    </NotAuthorized>
+</AuthorizeView>
 
 @inject NavigationManager Navigation
 @inject SimpleLoginService UserService
