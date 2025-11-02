@@ -3,7 +3,7 @@
 @page "/logout"
 
 @inject NavigationManager Navigation
-@inject IUserService<SignInPayload> UserService
+@inject SimpleLoginService UserService
 @code {
     [SupplyParameterFromQuery]
     public string? ReturnUrl { get; set; }

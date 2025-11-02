@@ -9,7 +9,7 @@ namespace TryBlazorAuth.Auth;
 
 public class SampleAuthService : AuthenticationService<SignInPayload>
 {
-    // --- デモ用にInMemoryでユーザー情報とトークンをを保持 ---
+    // デモ用にInMemoryでユーザー情報とトークンを保持 ---
     // 実際にはDBなどに保存してください。
     private Dictionary<string, UserInfo> Users { get; } =
         new()
@@ -31,7 +31,8 @@ public class SampleAuthService : AuthenticationService<SignInPayload>
 
     public SampleAuthService()
     {
-        var secretKey = "SuperSecretKeyForJwtTokenGeneration12345"; // 32文字以上推奨
+        // 32文字以上推奨。実際にはIConfigurationなどから取得してください。
+        var secretKey = "SuperSecretKeyForJwtTokenGeneration12345";
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
         _signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
         _tokenHandler = new JwtSecurityTokenHandler();
@@ -42,8 +43,9 @@ public class SampleAuthService : AuthenticationService<SignInPayload>
         CancellationToken cancellationToken = default
     )
     {
-        // dummy delay
+        // DB取得等を想定して少し遅延させる
         await Task.Delay(1000, cancellationToken);
+        // ユーザーを拾ってきて、パスワードを検証する
         if (
             Users.TryGetValue(signInPayload.Id, out var user)
             && user.Password == signInPayload.Password
@@ -67,6 +69,7 @@ public class SampleAuthService : AuthenticationService<SignInPayload>
         // refresh tokenを検証する
         if (UsersRefreshTokens.Any(kvp => kvp.Value == refreshToken))
         {
+            // User情報を取得して、新しいJWTペアを発行する
             var userId = UsersRefreshTokens.First(kvp => kvp.Value == refreshToken).Key;
             var user = Users[userId];
             return LoginSuccessful(user);
@@ -121,10 +124,12 @@ public class SampleAuthService : AuthenticationService<SignInPayload>
     }
 }
 
+// ログインに必要な情報
 public class SignInPayload
 {
     public required string Id { get; set; }
     public required string Password { get; set; }
 }
 
+// ユーザー情報(デモ用)
 internal record UserInfo(string Id, string Password, string Name, string Role);
