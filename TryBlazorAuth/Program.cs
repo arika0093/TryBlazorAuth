@@ -1,14 +1,18 @@
+using BitzArt.Blazor.Auth.Server;
 using MudBlazor.Services;
+using TryBlazorAuth.Auth;
 using TryBlazorAuth.Components;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// user blazor.auth
+builder.AddBlazorAuth<SampleAuthService>();
 
 // Add MudBlazor services
 builder.Services.AddMudServices();
 
 // Add services to the container.
-builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents();
+builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 
 var app = builder.Build();
 
@@ -22,11 +26,12 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-
 app.UseAntiforgery();
 
 app.MapStaticAssets();
-app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode();
+app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
+
+// add routing for auth
+app.MapAuthEndpoints();
 
 app.Run();

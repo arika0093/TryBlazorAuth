@@ -1,0 +1,19 @@
+﻿@using TryBlazorAuth.Auth 
+@using BitzArt.Blazor.Auth
+@page "/logout"
+
+@inject NavigationManager Navigation
+@inject IUserService<SignInPayload> UserService
+@code {
+    [SupplyParameterFromQuery]
+    public string? ReturnUrl { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Logout
+        await UserService.SignOutAsync();
+        // Redirect to the specified ReturnUrl or to the home page
+        var redirectUrl = ReturnUrl ?? "/";
+        Navigation.NavigateTo(redirectUrl, forceLoad: true);
+    }
+}
