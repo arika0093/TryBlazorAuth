@@ -90,6 +90,7 @@ public class SampleAuthService : AuthenticationService<SignInPayload>
             new(ClaimTypes.Role, user.Role),
         };
         var jwt = BuildJwtPair(claims);
+        UsersRefreshTokens[user.Id] = jwt.RefreshToken!;
         return Success(jwt);
     }
 
